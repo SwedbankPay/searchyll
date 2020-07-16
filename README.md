@@ -36,6 +36,9 @@ elasticsearch:
   ignore:                           # Optional. No default.
     - /news/*
   production_only: false            # Optional. Defaults to false.
+  environments:                     # Optional. Set environments where Searchyll should run
+    - 'production'                  # Default runs on all environment if empty
+    - 'development'                 # If set will only run in speccified environments
 ```
 
 ### Custom Settings File Example
