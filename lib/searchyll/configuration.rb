@@ -85,7 +85,7 @@ module Searchyll
     end
 
     def elasticsearch_production_only?
-      site.config['environment'] == "production" && site.config['elasticsearch']['production_only'] == true
+      site.config['environment'] == "production" || site.config['elasticsearch']['production_only'] == true
     end
 
     def elasticsearch_mapping
