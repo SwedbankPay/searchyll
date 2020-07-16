@@ -90,7 +90,7 @@ module Searchyll
       return true if settings['environments'].nil?
       return true unless settings['environments'].is_a?(Array)
 
-      site.config['elasticsearch']['environments'].include? site.config['environment']
+      settings['environments'].include? site.config['environment']
     end
 
     def elasticsearch_mapping
