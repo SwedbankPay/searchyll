@@ -20,6 +20,7 @@ module Searchyll
     attr_accessor :timestamp
     attr_accessor :uri
     attr_accessor :working
+    attr_accessor :api_key
 
     # Initialize a basic indexer, with a Jekyll site configuration, waiting
     # to be supplied with documents for indexing.
@@ -30,6 +31,7 @@ module Searchyll
       self.working       = true
       self.timestamp     = Time.now
       self.batch_size    = BATCH_SIZE
+      self.api_key       = configuration.api_key unless configuration.api_key.nil?
     end
 
     # Public: Add new documents for batch indexing.
@@ -152,6 +154,7 @@ module Searchyll
       req['Accept']    = 'application/json'
       # Append auth credentials if the exist
       req.basic_auth(uri.user, uri.password) if uri.user && uri.password
+      req['Authorization'] = api_key unless api_key.nil?
       req
     end
 

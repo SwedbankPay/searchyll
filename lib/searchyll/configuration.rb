@@ -79,6 +79,10 @@ module Searchyll
       site.config['elasticsearch']['custom_settings']
     end
 
+    def api_key
+      site.config['elasticsearch']['api_key']
+    end
+
     def should_execute_in_current_environment?
       settings = site.config['elasticsearch']
 
