@@ -36,6 +36,7 @@ elasticsearch:
   environments:                     # Optional. Set environments where Searchyll should run
     - 'production'                  # Default runs on all environment if empty
     - 'development'                 # If set will only run in speccified environments
+  api_key: super-secret-key         # Optional. Default is empty, will set a authorization header.
 ```
 
 ### Custom Settings File Example
