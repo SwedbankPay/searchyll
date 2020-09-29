@@ -68,5 +68,16 @@ describe Searchyll::Configuration do
     conf = Searchyll::Configuration.new site
     expect(conf.should_execute_in_current_environment?).to eq(true)
   end
+
+  it 'is expected to return the api key' do
+    site_config = {
+      'elasticsearch' => {
+        'api_key' => 'test'
+      }
+    }
+    site = TestSite.new site_config
+    conf = Searchyll::Configuration.new site
+    expect(conf.api_key).to eq('test')
+  end
   
 end
