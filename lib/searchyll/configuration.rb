@@ -80,8 +80,10 @@ module Searchyll
     end
 
     def api_key
-      return site.config['elasticsearch']['api_key'] unless site.config['elasticsearch']['api_key'].nil
-      return ENV['ELASTICSEARCH_API_KEY']
+      if site.config['elasticsearch']['api_key'].nil?
+        return ENV['ELASTICSEARCH_API_KEY']
+
+      return site.config['elasticsearch']['api_key']
     end
 
     def should_execute_in_current_environment?
