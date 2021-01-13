@@ -82,6 +82,7 @@ module Searchyll
     def api_key
       if site.config['elasticsearch']['api_key'].nil?
         return ENV['ELASTICSEARCH_API_KEY']
+      end
 
       return site.config['elasticsearch']['api_key']
     end
