@@ -99,7 +99,7 @@ module Searchyll
     # A versioned index name, based on the time of the indexing run.
     # Will be later added to an alias for hot reindexing.
     def elasticsearch_index_name
-      "#{configuration.elasticsearch_index_base_name}-#{timestamp.strftime('%Y%m%d%H%M%S')}"
+      "#{configuration.elasticsearch_index_base_name}"
     end
 
     # Prepare an HTTP connection
