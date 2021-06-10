@@ -84,6 +84,23 @@ module Searchyll
       site.config['elasticsearch']['custom_settings']
     end
 
+    def api_key
+      if site.config['elasticsearch']['api_key'].nil?
+        return ENV['ELASTICSEARCH_API_KEY']
+      end
+
+      return site.config['elasticsearch']['api_key']
+    end
+
+    def should_execute_in_current_environment?
+      settings = site.config['elasticsearch']
+
+      return true if settings['environments'].nil?
+      return true unless settings['environments'].is_a?(Array)
+
+      settings['environments'].include? site.config['environment']
+    end
+
     def elasticsearch_mapping
         read_yaml(elasticsearch_mapping_path, nil)
     end

@@ -35,6 +35,11 @@ elasticsearch:
   custom_mappings: _es_mappings.yml # Optional. No default. Relative to your src folder
   ignore:                           # Optional. No default.
     - /news/*
+  production_only: false            # Optional. Defaults to false.
+  environments:                     # Optional. Set environments where Searchyll should run
+    - 'production'                  # Default runs on all environment if empty
+    - 'development'                 # If set will only run in speccified environments
+  api_key: super-secret-key         # Optional. Default is empty, will set a authorization header.
 ```
 
 ### Custom Settings File Example
@@ -71,4 +76,4 @@ prompt that will allow you to experiment.
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/omc/searchyll
+<https://github.com/omc/searchyll>
