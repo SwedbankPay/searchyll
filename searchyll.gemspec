@@ -22,6 +22,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-rake"
+  spec.add_development_dependency "rubocop-rspec"
 
   spec.add_dependency "jekyll", ">= 3.0"
   spec.add_dependency "nokogiri"
