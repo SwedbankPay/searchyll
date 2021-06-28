@@ -95,10 +95,11 @@ module Searchyll
     def should_execute_in_current_environment?
       settings = site.config['elasticsearch']
 
-      return true if settings['environments'].nil?
-      return true unless settings['environments'].is_a?(Array)
+      environments = settings['environments']
 
-      settings['environments'].include? site.config['environment']
+      return true if environments.nil? || !environments.is_a?(Array)
+
+      environments.include?(Jekyll.env) || environments.include?(site.config['environment'])
     end
 
     def elasticsearch_mapping

@@ -14,16 +14,17 @@ begin
     if config.valid?
       # return if we should only run in production
       if config.should_execute_in_current_environment?
-        puts "setting up indexer hook"
+        Jekyll.logger.debug('searchyll: Setting up indexer hook')
         indexers[site] = Searchyll::Indexer.new(config)
         indexers[site].start
       else
-        puts "Only running in #{site.config['elasticsearch']['environments']}"
+        env = site.config['elasticsearch']['environments']
+        Jekyll.logger.warn("searchyll: Not running in current environment. Only running in #{env}.")
       end
     else
-      puts 'Invalid Elasticsearch configuration provided, skipping indexing...'
+      Jekyll.logger.error('searchyll: Invalid Elasticsearch configuration provided, skipping indexing...')
       config.reasons.each do |r|
-        puts "  #{r}"
+        Jekyll.logger.error("searchyll:  #{r}")
       end
     end
   end
@@ -39,7 +40,7 @@ begin
     if (indexer = indexers[page.site])
       # strip html
       nokogiri_doc = Nokogiri::HTML(page.output)
-  
+
       # puts %(        indexing page #{page.url})
       indexer << ({
         "id"   => page.name,
@@ -65,5 +66,5 @@ begin
   end
 
 rescue => e
-  puts e.message
+  Jekyll.logger.error(e.message)
 end

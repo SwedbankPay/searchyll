@@ -91,10 +91,10 @@ module Searchyll
         # Adjust the batch size
         if (Time.now - t) / (60.0 / TEMPO) < 0.5
           self.batch_size = (batch_size * BATCH_RESIZE_FACTOR).round
-          puts "Increased batch to #{batch_size}"
+          Jekyll.logger.debug("searchyll: Increased batch to #{batch_size}")
         elsif (Time.now - t) / (60.0 / TEMPO) > 0.9
           self.batch_size = (batch_size / BATCH_RESIZE_FACTOR).round
-          puts "Decreased batch to #{batch_size}"
+          Jekyll.logger.debug("searchyll: Decreased batch to #{batch_size}")
         end
 
         # Tight loop to sleep through any remaining time in the tempo
@@ -184,7 +184,7 @@ module Searchyll
       end.join("\n").force_encoding('ascii-8bit') + "\n"
       res = http.request(bulk_insert)
       unless res.kind_of?(Net::HTTPSuccess)
-        $stderr.puts "Elasticsearch returned an error when performing bulk insert: " + res.message + " " + res.body
+        Jekyll.logger.error("searchyll: Elasticsearch returned an error when performing bulk insert: #{res.message} #{res.body}")
         exit
       end
     end
@@ -258,7 +258,7 @@ module Searchyll
       }.to_json
       res = http.request(update_aliases)
       if !res.kind_of?(Net::HTTPSuccess)
-        $stderr.puts "Elasticsearch returned an error when updating aliases: " + res.message + " " + res.body
+        Jekyll.logger.error("searchyll: Elasticsearch returned an error when updating aliases: #{res.message} #{res.body}")
         exit
       end
     end
@@ -267,7 +267,7 @@ module Searchyll
     def finalize_cleanup(http)
       return if old_indices.nil? || old_indices.empty?
       cleanup_indices = http_delete("/#{old_indices.join(',')}")
-      puts %(       Old indices: #{old_indices.join(', ')})
+      Jekyll.logger.debug(%(       Old indices: #{old_indices.join(', ')}))
       http.request(cleanup_indices)
     end
   end

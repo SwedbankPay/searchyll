@@ -16,7 +16,7 @@ module Searchyll
 
       # Don't do anything if the Elasticsearch URL is missing
       if configuration.elasticsearch_url.empty?
-        puts "No Elasticsearch URL present, skipping indexing"
+        Jekyll.logger.info('searchyll: No Elasticsearch URL present, skipping indexing')
         return
       end
 
@@ -34,7 +34,7 @@ module Searchyll
       # end
 
       Jekyll::Hooks.register :posts, :post_render do |post|
-        puts post.output
+        Jekyll.logger.debug(post.output)
       end
 
       # Signal to the indexer that we're done adding content
@@ -42,8 +42,9 @@ module Searchyll
 
     # Handle any exceptions gracefully
     rescue => e
-      $stderr.puts "Searchyll: #{e.class.name} - #{e.message}"
-      $stderr.puts "Backtrace: #{e.backtrace.each{|l| puts l};nil}"
+      Jekyll.logger.error("Searchyll: #{e.class.name} - #{e.message}")
+      backtrace = e.backtrace.join("\n")
+      Jekyll.logger.error("Backtrace: #{backtrace}")
       raise(e)
     end
 
