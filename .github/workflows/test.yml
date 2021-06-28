@@ -1,0 +1,27 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Setup Ruby 2.7
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+
+    - name: rubocop
+      run: bundle exec rubocop --fail-level warning --display-only-fail-level-offenses
+
+    - name: Test with Rake
+      run: bundle exec rake
+
+    - name: Codecov upload
+      run: bundle exec rake codecov:upload || echo 'Codecov upload failed'

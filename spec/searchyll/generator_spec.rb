@@ -1,3 +1,4 @@
+require 'searchyll/generator'
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Searchyll::Generator do
@@ -14,9 +15,9 @@ describe Searchyll::Generator do
   end
 
   # TODO: integrated site generation
-  it 'can generate an index' do
-    g = Searchyll::Generator.new
-    g.generate(jekyll_site)
-  end
+  # it 'can generate an index' do
+  #   g = Searchyll::Generator.new
+  #   g.generate(jekyll_site)
+  # end
 
 end
