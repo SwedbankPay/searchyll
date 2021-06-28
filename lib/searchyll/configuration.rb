@@ -6,6 +6,10 @@ module Searchyll
       self.site = site
     end
 
+    def environment
+      ENV['JEKYLL_ENV'] || site.config['environment'] || 'development'
+    end
+
     # Determine a URL for the cluster, or fail with error
     def elasticsearch_url
       ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL'] ||
@@ -98,7 +102,7 @@ module Searchyll
       return true if settings['environments'].nil?
       return true unless settings['environments'].is_a?(Array)
 
-      settings['environments'].include? site.config['environment']
+      settings['environments'].include? environment
     end
 
     def elasticsearch_mapping
