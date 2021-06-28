@@ -1,5 +1,7 @@
-guard :rspec, cmd: "bundle exec rspec" do
-  require "guard/rspec/dsl"
+# frozen_string_literal: true
+
+guard :rspec, cmd: 'bundle exec rspec' do
+  require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
 
   # RSpec files
@@ -11,5 +13,4 @@ guard :rspec, cmd: "bundle exec rspec" do
   # Ruby files
   ruby = dsl.ruby
   dsl.watch_spec_files_for(ruby.lib_files)
-
 end

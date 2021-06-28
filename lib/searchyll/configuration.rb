@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchyll
   class Configuration
     attr_accessor :site
@@ -9,7 +11,7 @@ module Searchyll
     # Determine a URL for the cluster, or fail with error
     def elasticsearch_url
       ENV['BONSAI_URL'] || ENV['ELASTICSEARCH_URL'] ||
-        ((site.config||{})['elasticsearch']||{})['url']
+        ((site.config || {})['elasticsearch'] || {})['url']
     end
 
     def valid?
@@ -24,7 +26,7 @@ module Searchyll
         reasons << '  Looked in ENV[BONSAI_URL]'
         reasons << '  Looked in ENV[ELASTICSEARCH_URL]'
         reasons << '  Looked in _config.elasticsearch.url'
-      elsif elasticsearch_url && ! elasticsearch_url.start_with?('http')
+      elsif elasticsearch_url && !elasticsearch_url.start_with?('http')
         reasons << "Elasticsearch url must start with 'http' or 'https'"
         reasons << "  Current Value: #{elasticsearch_url}"
         reasons << "  Current Source: #{elasticsearch_url_source}"
@@ -38,7 +40,7 @@ module Searchyll
         'ENV[BONSAI_URL]'
       elsif ENV['ELASTICSEARCH_URL']
         'ENV[ELASTICSEARCH_URL]'
-      elsif ((site.config||{})['elasticsearch']||{})['url']
+      elsif ((site.config || {})['elasticsearch'] || {})['url']
         'CONFIG'
       else
         'NOT FOUND'
@@ -61,7 +63,7 @@ module Searchyll
 
     # Getter for the index name
     def elasticsearch_index_base_name
-      site.config['elasticsearch']['index_name'] || "jekyll"
+      site.config['elasticsearch']['index_name'] || 'jekyll'
     end
 
     # Getter for the default type
@@ -85,11 +87,9 @@ module Searchyll
     end
 
     def api_key
-      if site.config['elasticsearch']['api_key'].nil?
-        return ENV['ELASTICSEARCH_API_KEY']
-      end
+      return ENV['ELASTICSEARCH_API_KEY'] if site.config['elasticsearch']['api_key'].nil?
 
-      return site.config['elasticsearch']['api_key']
+      site.config['elasticsearch']['api_key']
     end
 
     def should_execute_in_current_environment?
@@ -103,7 +103,7 @@ module Searchyll
     end
 
     def elasticsearch_mapping
-        read_yaml(elasticsearch_mapping_path, nil)
+      read_yaml(elasticsearch_mapping_path, nil)
     end
 
     def elasticsearch_settings

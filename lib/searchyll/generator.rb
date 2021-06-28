@@ -1,16 +1,15 @@
+# frozen_string_literal: true
+
 require 'searchyll/indexer'
 require 'searchyll/configuration'
 
 module Searchyll
-
   class Generator < Jekyll::Generator
-
     safe true
     priority :lowest
 
     # Public: Invoked by Jekyll during the generation phase.
     def generate(site)
-
       # Gather the configuration options
       configuration = Configuration.new(site)
 
@@ -41,13 +40,11 @@ module Searchyll
       indexer.finish
 
     # Handle any exceptions gracefully
-    rescue => e
+    rescue StandardError => e
       Jekyll.logger.error("Searchyll: #{e.class.name} - #{e.message}")
       backtrace = e.backtrace.join("\n")
       Jekyll.logger.error("Backtrace: #{backtrace}")
       raise(e)
     end
-
   end
-
 end
