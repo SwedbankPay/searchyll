@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'net/http'
 
@@ -13,15 +15,8 @@ module Searchyll
     # Requests per minute for updates to ES
     TEMPO = 94
 
-    attr_accessor :batch_size
-    attr_accessor :configuration
-    attr_accessor :indexer_thread
-    attr_accessor :queue
-    attr_accessor :timestamp
-    attr_accessor :uri
-    attr_accessor :working
-	attr_accessor :ignore_regex
-    attr_accessor :api_key
+    attr_accessor :batch_size, :configuration, :indexer_thread, :queue, :timestamp, :uri, :working, :ignore_regex,
+                  :api_key
 
     # Initialize a basic indexer, with a Jekyll site configuration, waiting
     # to be supplied with documents for indexing.
@@ -36,9 +31,9 @@ module Searchyll
 
       # Compute a regex for detecting paths to ignore
       begin
-        escaped = (configuration.elasticsearch_ignore.map {|i| Regexp.escape(i).gsub('\*','.+?')}).join('|')
+        escaped = (configuration.elasticsearch_ignore.map { |i| Regexp.escape(i).gsub('\*', '.+?') }).join('|')
         self.ignore_regex = Regexp.new "^(#{escaped})$", Regexp::IGNORECASE
-      rescue => e
+      rescue StandardError => e
         Jekyll.logger.error("searchyll: invalid ignore: #{configuration.elasticsearch_ignore}: #{e}")
         raise
       end
@@ -46,8 +41,8 @@ module Searchyll
 
     # Public: Add new documents for batch indexing.
     def <<(doc)
-      if doc['url'] =~ self.ignore_regex
-        Jekyll.logger.debug("     ...not adding to search index (ignore regex: #{self.ignore_regex})")
+      if doc['url'] =~ ignore_regex
+        Jekyll.logger.debug("     ...not adding to search index (ignore regex: #{ignore_regex})")
       else
         queue << doc
       end
@@ -76,6 +71,7 @@ module Searchyll
     def indexer_loop(http)
       tempo_loop do
         break unless working?
+
         es_bulk_insert!(http, current_batch)
       end
     end
@@ -98,7 +94,7 @@ module Searchyll
         end
 
         # Tight loop to sleep through any remaining time in the tempo
-        while (60.0 / TEMPO) - (Time.now - t) > 0
+        while ((60.0 / TEMPO) - (Time.now - t)).positive?
           sleep [0.1, (60.0 / TEMPO) - (Time.now - t)].min
           break unless working?
         end
@@ -129,7 +125,7 @@ module Searchyll
     def prepare_index
       create_index_request = http_put("/#{elasticsearch_index_name}")
       payload = {
-        settings: configuration.elasticsearch_settings,
+        settings: configuration.elasticsearch_settings
       }
 
       if configuration.elasticsearch_mapping
@@ -177,13 +173,14 @@ module Searchyll
     # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
     def es_bulk_insert!(http, batch)
       return if batch.empty?
+
       bulk_insert = http_post("/#{elasticsearch_index_name}/#{configuration.elasticsearch_default_type}/_bulk")
       bulk_insert.content_type = 'application/x-ndjson'
       bulk_insert.body = batch.map do |doc|
         [{ index: {} }.to_json, doc.to_json].join("\n")
       end.join("\n").force_encoding('ascii-8bit') + "\n"
       res = http.request(bulk_insert)
-      unless res.kind_of?(Net::HTTPSuccess)
+      unless res.is_a?(Net::HTTPSuccess)
         Jekyll.logger.error("searchyll: Elasticsearch returned an error when performing bulk insert: #{res.message} #{res.body}")
         exit
       end
@@ -257,7 +254,7 @@ module Searchyll
         ]
       }.to_json
       res = http.request(update_aliases)
-      if !res.kind_of?(Net::HTTPSuccess)
+      unless res.is_a?(Net::HTTPSuccess)
         Jekyll.logger.error("searchyll: Elasticsearch returned an error when updating aliases: #{res.message} #{res.body}")
         exit
       end
@@ -266,6 +263,7 @@ module Searchyll
     # delete old indices after a successful reindexing run
     def finalize_cleanup(http)
       return if old_indices.nil? || old_indices.empty?
+
       cleanup_indices = http_delete("/#{old_indices.join(',')}")
       Jekyll.logger.debug(%(       Old indices: #{old_indices.join(', ')}))
       http.request(cleanup_indices)

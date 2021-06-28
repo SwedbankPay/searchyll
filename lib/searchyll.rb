@@ -1,10 +1,12 @@
-require "searchyll/version"
-require "jekyll/hooks"
-require "jekyll/plugin"
-require "jekyll/generator"
-require "searchyll/configuration"
-require "searchyll/indexer"
-require "nokogiri"
+# frozen_string_literal: true
+
+require 'searchyll/version'
+require 'jekyll/hooks'
+require 'jekyll/plugin'
+require 'jekyll/generator'
+require 'searchyll/configuration'
+require 'searchyll/indexer'
+require 'nokogiri'
 
 begin
   indexers = {}
@@ -43,9 +45,9 @@ begin
 
       # puts %(        indexing page #{page.url})
       indexer << ({
-        "id"   => page.name,
-        "url"  => page.url,
-        "text" => nokogiri_doc.xpath("//article//text()").to_s.gsub(/\s+/, " ")
+        'id' => page.name,
+        'url' => page.url,
+        'text' => nokogiri_doc.xpath('//article//text()').to_s.gsub(/\s+/, ' ')
       }).merge(page.data)
     end
   end
@@ -58,13 +60,12 @@ begin
       # puts %(        indexing document #{document.url})
 
       indexer << ({
-        "id"   =>  document.id,
-        "url"  =>  document.url,
-        "text" =>  nokogiri_doc.xpath("//article//text()").to_s.gsub(/\s+/, " ")
+        'id' => document.id,
+        'url' => document.url,
+        'text' => nokogiri_doc.xpath('//article//text()').to_s.gsub(/\s+/, ' ')
       }).merge(document.data)
     end
   end
-
-rescue => e
+rescue StandardError => e
   Jekyll.logger.error(e.message)
 end
